@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 26
@@ -7,10 +8,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        versionName "1.0.0"
     }
 
     buildTypes {
@@ -25,4 +23,13 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
+}
+
+publish {
+    userOrg = 'jingyangsddx'
+    groupId = 'com.king.lib'
+    artifactId = 'JActionbar'
+    publishVersion = '1.0.0'
+    desc = 'A custom actionbar which can parse menu resource and implement search, confirm action'
+    website = 'https://github.com/AidenKing/JActionbar.git'
 }
