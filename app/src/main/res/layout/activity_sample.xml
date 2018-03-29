@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.king.lib.jactionbar.SampleActivity">
+
+    <com.king.app.jactionbar.JActionbar
+        android:id="@+id/action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/actionbar_bg"
+        android:theme="@style/EtActionSearch"
+        app:supportSearch="true"
+        app:showIconBack="true"
+        app:title="Sample"
+        app:rippleColor="#33000000"
+        app:iconSize="44dp"
+        app:iconPadding="10dp"
+        app:titleSize="18dp"
+        app:maxShowIcon="4"
+        app:menu="@menu/menu_sample"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>

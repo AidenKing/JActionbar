@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--JActionbar-->
+    <declare-styleable name="JActionbar">
+        <attr name="android:background"/>
+        <attr name="title" format="string" />
+        <attr name="showIconBack" format="boolean" />
+        <attr name="rippleColor" format="color" />
+        <attr name="supportSearch" format="boolean" />
+        <attr name="titleSize" format="dimension" />
+        <attr name="iconSize" format="dimension" />
+        <attr name="iconPadding" format="dimension" />
+        <attr name="menu" format="reference" />
+        <attr name="maxShowIcon" format="integer" />
+    </declare-styleable>
+
+    <!--JActionbar 从MenuItem复制部分-->
+    <declare-styleable name="JMenuItem">
+        <attr name="android:id"/>
+        <attr name="android:title"/>
+        <attr name="android:icon"/>
+        <attr name="android:checkable"/>
+        <attr name="android:checked"/>
+        <attr name="android:visible"/>
+        <attr name="android:enabled"/>
+        <attr name="android:onClick"/>
+        <attr name="showAsAction">
+            <flag name="never" value="0"/>
+            <flag name="ifRoom" value="1"/>
+            <flag name="always" value="2"/>
+            <flag name="withText" value="4"/>
+            <flag name="collapseActionView" value="8"/>
+        </attr>
+        <attr format="reference" name="actionLayout"/>
+        <attr format="string" name="actionViewClass"/>
+        <attr format="string" name="actionProviderClass"/>
+        <attr format="string" name="contentDescription"/>
+        <attr format="string" name="tooltipText"/>
+        <attr format="color" name="iconTint"/>
+    </declare-styleable>
+</resources>
