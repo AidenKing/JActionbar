@@ -17,7 +17,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
+    android {
+        lintOptions {
+            abortOnError false
+        }
+    }
 }
 
 dependencies {
@@ -28,7 +32,7 @@ dependencies {
 publish {
     userOrg = 'jingyangsddx'
     groupId = 'com.king.lib'
-    artifactId = 'JActionbar'
+    artifactId = 'jactionbar'
     publishVersion = '1.0.0'
     desc = 'A custom actionbar which can parse menu resource and implement search, confirm action'
     website = 'https://github.com/AidenKing/JActionbar.git'

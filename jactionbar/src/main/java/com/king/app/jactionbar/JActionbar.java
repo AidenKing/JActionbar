@@ -44,25 +44,24 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 描述: 借鉴原生TitleBar的设计模式
- * 支持按照menu文件布局icon与文字列表，超出最大icon显示数量后以more菜单弹出列表显示
- * 扩展功能：
- * 1. 支持自定义icon大小，padding，以及标题文字大小
- * 2. 支持搜索模式（实现搜索按钮与搜索框动画以及keywords时间，搜索按钮自动适配位置）
- * 3. 支持confirm模式（cancel/ok）
- * <p/>作者：景阳
- * <p/>创建时间: 2018/3/27 16:10
+ * customize actionbar extended from RelativeLayout
+ * support parse android menu resource to action icons and menu items
+ * support set icon's size and padding, control the maximum icons to show
+ * integrate search icon and group, and expose event for words filter
+ * integrate ok/cancel group and expose event listener
+ * <p/>author：Aiden
+ * <p/>create time: 2018/3/27 16:10
  */
 public class JActionbar extends RelativeLayout {
 
     /**
-     * 集成icon的id
+     * the ids of integrated views
      */
     private final int ID_GROUP_TITLE = 1;
     private final int ID_GROUP_ICON = 2;
     private final int ID_ICON_SEARCH = 3;
     private final int ID_ICON_BACK = 4;
-    private final int ID_ICON_MENU = 5;
+    private final int ID_ICON_MORE = 5;
     private final int ID_ICON_CLOSE_SEARCH = 6;
     private final int ID_CONFIRM_OK = 7;
     private final int ID_CONFIRM_CANCEL = 8;
@@ -134,7 +133,7 @@ public class JActionbar extends RelativeLayout {
 
     /**
      * search icon
-     * 只可能出现在最右侧或者倒数第二个位置
+     * could only be shown at the most right or next most right
      */
     private ImageView ivSearch;
 
@@ -159,7 +158,7 @@ public class JActionbar extends RelativeLayout {
     private OnBackListener onBackListener;
 
     /**
-     * confirm group关联的action id
+     * the specific action id of confirm event
      */
     private int mConfirmActionId;
 
@@ -171,7 +170,8 @@ public class JActionbar extends RelativeLayout {
     private PopupMenuProvider popupMenuProvider;
 
     /**
-     * 下划线的颜色可以在JActionbar标签下通过theme属性设置style改变：android:theme="@style/EtActionSearch"
+     * To change the color of EditText's underline:
+     * set android:theme="@style/EtActionSearch" like below to <JActionbarView> tag in xml
      *     <style name="EtActionSearch" parent="Theme.AppCompat.Light.NoActionBar">
      *         <item name="colorControlNormal">@color/white</item>
      *         <item name="colorControlActivated">@color/white</item>
@@ -180,12 +180,12 @@ public class JActionbar extends RelativeLayout {
     private EditText etSearch;
 
     /**
-     * 通过MenuParser解析出来的menu元素
+     * Keep the data parsed from menu resource
      */
     private JMenu menu;
 
     /**
-     * 弹出列表菜单中的子项集合
+     * menu items popped up as list
      */
     private List<JMenuItem> moreItemList;
 
@@ -291,6 +291,7 @@ public class JActionbar extends RelativeLayout {
      * @param menuRes
      */
     public void inflateMenu(int menuRes) {
+        // 必须重置view的状态，否则会影响后续判断（比如ivMenu是否为null会影响search动画）
         resetAllMenus();
         try {
             menu = new MenuParser().inflate(getContext(), menuRes);
@@ -302,9 +303,6 @@ public class JActionbar extends RelativeLayout {
         }
     }
 
-    /**
-     * 必须重置view的状态，否则会影响后续判断（比如ivMenu是否为null会影响search动画）
-     */
     private void resetAllMenus() {
         groupMenu.removeAllViews();
         ivSearch = null;
@@ -312,9 +310,10 @@ public class JActionbar extends RelativeLayout {
     }
 
     /**
-     * 1.最多允许显示maxShowIcon个icon，多余的以more展示
-     * 2.如果支持搜索，icon大于maxShowIcon个->搜索按钮显示在more左边，否则显示在最右边
-     * 3.search icon只会显示在最右边（icon总数小于等于maxShowIcon个）或者倒数第二个（icon总数大于maxShowIcon个）
+     * 1. the maximum icons to show are decided by maxShowIcon, others will be presented as popup list items
+     * 2. if isSupportSearch is true, then
+     *      if total icons > maxShowIcon, search icon will display on the left of icon more
+     *      else, search icon will display on the most right
      */
     private void showMenu() {
         int iconCount = 0;
@@ -329,7 +328,7 @@ public class JActionbar extends RelativeLayout {
         if (menu.getItemList() != null) {
             List<JMenuItem> list = menu.getItemList();
             for (JMenuItem item:list) {
-                // 直接作为弹出菜单
+                // as popup item
                 if (item.getShowAsAction() == Constants.SHOW_AS_ACTION_NEVER) {
                     moreItemList.add(item);
                 }
@@ -354,7 +353,7 @@ public class JActionbar extends RelativeLayout {
         // decide which place should search icon be put in
         if (iconCount > maxShowIcon) {
             JMenuItem menuIcon = new JMenuItem();
-            menuIcon.setId(ID_ICON_MENU);
+            menuIcon.setId(ID_ICON_MORE);
             menuIcon.setIconRes(R.drawable.ic_more_vert_white);
             menuIcon.setTitle("Menu");
             if (searchIcon != null) {
@@ -375,7 +374,7 @@ public class JActionbar extends RelativeLayout {
             if (view.getId() == ID_ICON_SEARCH) {
                 ivSearch = view;
             }
-            else if (view.getId() == ID_ICON_MENU) {
+            else if (view.getId() == ID_ICON_MORE) {
                 ivMenu = view;
             }
             view.setOnClickListener(iconClickListener);
@@ -390,7 +389,7 @@ public class JActionbar extends RelativeLayout {
 
         if (ivMenu == null && moreItemList.size() > 0) {
             JMenuItem menuIcon = new JMenuItem();
-            menuIcon.setId(ID_ICON_MENU);
+            menuIcon.setId(ID_ICON_MORE);
             menuIcon.setIconRes(R.drawable.ic_more_vert_white);
             menuIcon.setTitle("Menu");
             ivMenu = addIcon(menuIcon);
@@ -413,7 +412,6 @@ public class JActionbar extends RelativeLayout {
             mPopup.setHeight(ListPopupWindow.WRAP_CONTENT);
             mPopup.setHorizontalOffset(-10);
             mPopup.setDropDownGravity(Gravity.END);
-            // 设置为true可以防止展开后再点More按钮又弹出一次
             mPopup.setModal(true);
             mPopup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -434,8 +432,6 @@ public class JActionbar extends RelativeLayout {
         groupSearch = new RelativeLayout(getContext());
         groupSearch.setBackgroundColor(backgroundColor);
         groupSearch.setVisibility(GONE);
-        // group的宽度固定为在search icon的左边
-        // 当search icon位于倒数第二个的时候，动画会执行从search icon的左边跟随search icon一起移动
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
         addView(groupSearch, params);
 
@@ -476,7 +472,7 @@ public class JActionbar extends RelativeLayout {
         ivCloseSearch.setOnClickListener(iconClickListener);
         groupSearch.addView(ivCloseSearch);
 
-        // getWidth()必须在view完成布局后才有值
+        // make sure getWidth() is not 0
         post(new Runnable() {
             @Override
             public void run() {
@@ -503,7 +499,7 @@ public class JActionbar extends RelativeLayout {
 
         GradientDrawable gd = new GradientDrawable();
         gd.setColor(Color.TRANSPARENT);
-        // 参数1：波纹颜色，参数2：常态下的背景，参数3：波纹限制边界
+        // param1:ripple color, param2:background of normal status, param3:the limit of ripple
         RippleDrawable drawable = new RippleDrawable(ColorStateList.valueOf(rippleColor)
                 , gd, new ShapeDrawable(new OvalShape()));
         view.setBackground(drawable);
@@ -571,7 +567,7 @@ public class JActionbar extends RelativeLayout {
         view.setTextSize(TypedValue.COMPLEX_UNIT_PX, ParamUtils.dp2px(18));
         GradientDrawable gd = new GradientDrawable();
         gd.setColor(Color.TRANSPARENT);
-        // 参数1：波纹颜色，参数2：常态下的背景，参数3：波纹限制边界
+        // param1:ripple color, param2:background of normal status, param3:the limit of ripple
         RippleDrawable drawable = new RippleDrawable(ColorStateList.valueOf(rippleColor)
                 , gd, new ShapeDrawable(new RectShape()));
         view.setBackground(drawable);
@@ -596,7 +592,7 @@ public class JActionbar extends RelativeLayout {
                 case ID_ICON_CLOSE_SEARCH:
                     hideSearchBar();
                     break;
-                case ID_ICON_MENU:
+                case ID_ICON_MORE:
                     mPopup.show();
                     break;
                 case ID_CONFIRM_OK:
@@ -615,6 +611,7 @@ public class JActionbar extends RelativeLayout {
                     onCancel();
                     break;
                 default:
+                    // check if registered popup menu for icon and don't dispatch to menu item listener if registered
                     if (popupMenuMap.get(v.getId()) != null && popupMenuMap.get(v.getId())) {
                         if (popupMenuProvider != null) {
                             popupMenuProvider.getPopupMenu(v.getId(), v).show();
@@ -642,10 +639,15 @@ public class JActionbar extends RelativeLayout {
         }
     }
 
+    /**
+     * search icon is in the most right
+     * true: search group execute animation with alpha from 0 to 1
+     * false: search group execute animation with alpha from 0 to 1 and follow search icon to move to the most right
+     * search icon could only be in the most right or the next most right for now
+     */
     private void showSearchBar() {
         if (groupSearch.getVisibility() != View.VISIBLE) {
             groupSearch.setVisibility(View.VISIBLE);
-            // search处于倒数第二个位置
             if (ivMenu != null) {
                 ivMenu.setVisibility(INVISIBLE);
 
@@ -676,8 +678,12 @@ public class JActionbar extends RelativeLayout {
         }
     }
 
+    /**
+     * search icon is in the most right
+     * true: search group execute animation with alpha from 1 to 0
+     * false: search group execute animation with alpha from 1 to 0 and search icon will move to the original place
+     */
     private void hideSearchBar() {
-        // search处于倒数第二个位置
         if (ivMenu != null) {
             Animation iconAnim = new TranslateAnimation(ivSearch.getWidth(), 0, 0, 0);
             iconAnim.setDuration(500);
@@ -745,8 +751,18 @@ public class JActionbar extends RelativeLayout {
         tvTitle.setText(name);
     }
 
+    /**
+     * need call this before inflate
+     */
     public void enableSearch() {
         isSupportSearch = true;
+    }
+
+    /**
+     * need call this before inflate
+     */
+    public void disableSearch() {
+        isSupportSearch = false;
     }
 
     public void setPopupMenuProvider(PopupMenuProvider popupMenuProvider) {
@@ -754,7 +770,7 @@ public class JActionbar extends RelativeLayout {
     }
 
     /**
-     * 注册popupMenu
+     * register PopupMenu for menu item(only worked for items presented by icon)
      * @param menuItemId
      */
     public void registerPopupMenu(int menuItemId) {
@@ -762,13 +778,17 @@ public class JActionbar extends RelativeLayout {
     }
 
     /**
-     * 取消注册popupMenu
+     * cancel PopupMenu register for menu item
      * @param menuItemId
      */
     public void removeRegisteredPopupMenu(int menuItemId) {
         popupMenuMap.remove(menuItemId);
     }
 
+    /**
+     * to control the confirm status
+     * @return
+     */
     public boolean onBackPressed() {
         if (mConfirmActionId != 0) {
             onCancel();

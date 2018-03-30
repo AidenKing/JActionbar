@@ -17,10 +17,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * 描述:parse menu file
+ * parse menu file
  * codes are referred to MenuInflater
- * <p/>作者：景阳
- * <p/>创建时间: 2018/3/28 9:04
+ * <p/>author：Aiden
+ * <p/>create time: 2018/3/28 9:04
  */
 public class MenuParser {
 

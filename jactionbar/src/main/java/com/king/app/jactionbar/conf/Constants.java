@@ -1,9 +1,9 @@
 package com.king.app.jactionbar.conf;
 
 /**
- * 描述:
- * <p/>作者：景阳
- * <p/>创建时间: 2018/3/28 17:07
+ *
+ * <p/>author：Aiden
+ * <p/>create time: 2018/3/28 17:07
  */
 public class Constants {
 

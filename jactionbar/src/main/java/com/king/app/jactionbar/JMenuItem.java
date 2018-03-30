@@ -1,9 +1,9 @@
 package com.king.app.jactionbar;
 
 /**
- * 描述:support to parse android:id/android:title/android:icon/app:showAsAction for now
- * <p/>作者：景阳
- * <p/>创建时间: 2018/3/28 9:05
+ * support to parse android:id/android:title/android:icon/app:showAsAction for now
+ * <p/>author：Aiden
+ * <p/>create time: 2018/3/28 9:05
  */
 public class JMenuItem {
 
