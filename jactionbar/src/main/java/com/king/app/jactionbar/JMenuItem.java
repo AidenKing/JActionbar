@@ -18,6 +18,12 @@ public class JMenuItem {
      */
     private int showAsAction;
 
+    private boolean isVisible;
+
+    public JMenuItem() {
+        isVisible = true;
+    }
+
     public int getId() {
         return id;
     }
@@ -48,5 +54,13 @@ public class JMenuItem {
 
     public void setShowAsAction(int showAsAction) {
         this.showAsAction = showAsAction;
+    }
+
+    public boolean isVisible() {
+        return isVisible;
+    }
+
+    public void setVisible(boolean visible) {
+        isVisible = visible;
     }
 }

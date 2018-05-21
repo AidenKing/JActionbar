@@ -9,6 +9,8 @@ import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.graphics.drawable.shapes.RectShape;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.ListPopupWindow;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -185,10 +187,23 @@ public class JActionbar extends RelativeLayout {
     private JMenu menu;
 
     /**
-     * menu items popped up as list
+     * all menu items could be popped up as list
      */
     private List<JMenuItem> moreItemList;
 
+    /**
+     * menu items displayed eventually
+     */
+    private List<JMenuItem> displayMoreItemList;
+
+    /**
+     * adapter for popup menu items
+     */
+    private ArrayAdapter<JMenuItem> moreMenuAdapter;
+
+    /**
+     * registered popup menu for icons from outside
+     */
     private Map<Integer, Boolean> popupMenuMap;
 
     public JActionbar(Context context) {
@@ -399,15 +414,25 @@ public class JActionbar extends RelativeLayout {
 
         // popup list to show menu item
         if (moreItemList.size() > 0) {
-            List<String> list = new ArrayList<>();
-            for (int i = 0; i < moreItemList.size(); i ++) {
-                list.add(moreItemList.get(i).getTitle());
+            displayMoreItemList = new ArrayList<>();
+            for (JMenuItem item:moreItemList) {
+                if (item.isVisible()) {
+                    displayMoreItemList.add(item);
+                }
             }
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, list);
+            moreMenuAdapter = new ArrayAdapter<JMenuItem>(getContext(), android.R.layout.simple_spinner_dropdown_item, displayMoreItemList) {
+                @NonNull
+                @Override
+                public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                    View view = super.getView(position, convertView, parent);
+                    ((TextView) view.findViewById(android.R.id.text1)).setText(displayMoreItemList.get(position).getTitle());
+                    return view;
+                }
+            };
             mPopup = new ListPopupWindow(getContext());
             mPopup.setAnchorView(ivMenu);
-            mPopup.setAdapter(adapter);
+            mPopup.setAdapter(moreMenuAdapter);
             mPopup.setWidth(ParamUtils.dp2px(140));
             mPopup.setHeight(ListPopupWindow.WRAP_CONTENT);
             mPopup.setHorizontalOffset(-10);
@@ -417,7 +442,7 @@ public class JActionbar extends RelativeLayout {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     if (onMenuItemListener != null) {
-                        onMenuItemListener.onMenuItemSelected(moreItemList.get(position).getId());
+                        onMenuItemListener.onMenuItemSelected(displayMoreItemList.get(position).getId());
                     }
                     mPopup.dismiss();
                 }
@@ -783,6 +808,43 @@ public class JActionbar extends RelativeLayout {
      */
     public void removeRegisteredPopupMenu(int menuItemId) {
         popupMenuMap.remove(menuItemId);
+    }
+
+    /**
+     * update menu text by specific id
+     * @param id
+     * @param text
+     */
+    public void updateMenuText(int id, String text) {
+        if (moreItemList != null) {
+            for (JMenuItem item:moreItemList) {
+                if (item.getId() == id) {
+                    item.setTitle(text);
+                    moreMenuAdapter.notifyDataSetChanged();
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * update visibility for menu text by specific id
+     * @param id
+     * @param visible
+     */
+    public void updateMenuItemVisible(int id, boolean visible) {
+        if (moreItemList != null) {
+            displayMoreItemList.clear();
+            for (JMenuItem item:moreItemList) {
+                if (item.getId() == id) {
+                    item.setVisible(visible);
+                }
+                if (item.isVisible()) {
+                    displayMoreItemList.add(item);
+                }
+            }
+            moreMenuAdapter.notifyDataSetChanged();
+        }
     }
 
     /**

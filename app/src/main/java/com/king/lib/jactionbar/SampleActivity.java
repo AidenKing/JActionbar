@@ -26,6 +26,7 @@ import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class SampleActivity extends AppCompatActivity {
 
@@ -129,7 +130,7 @@ public class SampleActivity extends AppCompatActivity {
     private void initList() {
 
         itemList = new ArrayList<>();
-        for (int i = 0; i < 30; i ++) {
+        for (int i = 0; i < 30; i++) {
             itemList.add(getRandomText() + i);
         }
 
@@ -142,7 +143,7 @@ public class SampleActivity extends AppCompatActivity {
     }
 
     private String getRandomText() {
-        return Math.abs(random.nextInt()) % 2 == 0 ? "Test item ":"Random item ";
+        return Math.abs(random.nextInt()) % 2 == 0 ? "Test item " : "Random item ";
     }
 
     private void onMenuItemSelected(int menuId) {
@@ -190,7 +191,7 @@ public class SampleActivity extends AppCompatActivity {
 
     private void delete(List<String> selectedData) {
         if (selectedData != null) {
-            for (String data:selectedData) {
+            for (String data : selectedData) {
                 itemList.remove(data);
             }
             adapter.setList(itemList);
@@ -227,5 +228,17 @@ public class SampleActivity extends AppCompatActivity {
             return;
         }
         super.onBackPressed();
+    }
+
+    @OnClick({R.id.btn_menu, R.id.btn_visible})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.btn_menu:
+                actionBar.updateMenuText(R.id.menu_close, "Quit");
+                break;
+            case R.id.btn_visible:
+                actionBar.updateMenuItemVisible(R.id.menu_edit, false);
+                break;
+        }
     }
 }
