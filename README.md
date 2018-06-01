@@ -4,7 +4,7 @@
 
 ```
 dependencies {
-    compile 'com.king.lib:jactionbar:1.0.1'
+    compile 'com.king.lib:jactionbar:1.0.3'
 }
 ```
 
@@ -63,6 +63,8 @@ use JActionbar like this
     app:iconPadding="10dp"
     app:titleSize="18dp"
     app:maxShowIcon="4"
+    app:iconColor="@color/white"
+    app:titleColor="@color/white"
     app:menu="@menu/menu_sample"/>
 ```
 
@@ -76,8 +78,10 @@ use JActionbar like this
 | rippleColor   | color      | set the ripple color of action icons                         |
 | iconSize      | dimenssion | set the size of action icons                                 |
 | iconPadding   | dimenssion | set the padding of action icons                              |
+| iconColor     | color      | set the color of action icons                                |
 | menu          | menu       | specific the menu resource, you can also call inflate(R.menu.xxx) in java codes |
 | title         | string     | actionbar title                                              |
+| titleColor    | color      | actionbar title color                                        |
 | titleSize     | dimenssion | title size                                                   |
 
 listener for back icon
