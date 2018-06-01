@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.ShapeDrawable;
@@ -77,6 +78,11 @@ public class JActionbar extends RelativeLayout {
      * icon padding
      */
     private int iconPadding = ParamUtils.dp2px(8);
+
+    /**
+     * icon color
+     */
+    private int iconColor = Color.WHITE;
 
     /**
      * support search icon and search input event
@@ -206,6 +212,11 @@ public class JActionbar extends RelativeLayout {
      */
     private Map<Integer, Boolean> popupMenuMap;
 
+    /**
+     * text color
+     */
+    private int titleColor;
+
     public JActionbar(Context context) {
         super(context);
         init(null);
@@ -224,6 +235,7 @@ public class JActionbar extends RelativeLayout {
         rippleColor = typedArray.getColor(R.styleable.JActionbar_rippleColor, Color.parseColor("#66000000"));
         iconSize = typedArray.getDimensionPixelOffset(R.styleable.JActionbar_iconSize, ParamUtils.dp2px(40));
         iconPadding = typedArray.getDimensionPixelOffset(R.styleable.JActionbar_iconPadding, ParamUtils.dp2px(8));
+        iconColor = typedArray.getColor(R.styleable.JActionbar_iconColor, Color.WHITE);
         isSupportSearch = typedArray.getBoolean(R.styleable.JActionbar_supportSearch, false);
         backgroundColor = typedArray.getColor(R.styleable.JActionbar_android_background, Color.parseColor("#fa7198"));
         maxShowIcon = typedArray.getInt(R.styleable.JActionbar_maxShowIcon, 4);
@@ -251,6 +263,9 @@ public class JActionbar extends RelativeLayout {
         tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, titleSize);
         tvTitle.setText(title);
         tvTitle.setTextAppearance(getContext(), R.style.TvTitle);
+
+        titleColor = a.getColor(R.styleable.JActionbar_titleColor, Color.WHITE);
+        tvTitle.setTextColor(titleColor);
     }
 
     /**
@@ -455,13 +470,12 @@ public class JActionbar extends RelativeLayout {
      */
     private void initSearch() {
         groupSearch = new RelativeLayout(getContext());
-        groupSearch.setBackgroundColor(backgroundColor);
         groupSearch.setVisibility(GONE);
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
         addView(groupSearch, params);
 
         etSearch = new EditText(getContext());
-        etSearch.setTextColor(Color.WHITE);
+        etSearch.setTextColor(titleColor);
         params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         params.leftMargin = ParamUtils.dp2px(16);
         params.rightMargin = ParamUtils.dp2px(10);
@@ -539,6 +553,9 @@ public class JActionbar extends RelativeLayout {
         else {
             view.setLayoutParams(params);
         }
+
+        // 这里用SRC_IN，第一个参数是source，表示source与原图像叠加后相交的部分运用source的颜色，如果是SRC_TOP则是叠加的情况，SRC则是source color充满整个view区域
+        view.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN);
         return view;
     }
 
@@ -672,6 +689,20 @@ public class JActionbar extends RelativeLayout {
      */
     private void showSearchBar() {
         if (groupSearch.getVisibility() != View.VISIBLE) {
+
+            // hide all views except search icon and menu icon
+            if (ivBack != null) {
+                ivBack.setVisibility(GONE);
+            }
+            tvTitle.setVisibility(GONE);
+            for (int i = 0; i < groupMenu.getChildCount(); i ++) {
+                int id = groupMenu.getChildAt(i).getId();
+                if (id != ID_ICON_SEARCH && id != ID_ICON_MORE) {
+                    groupMenu.getChildAt(i).setVisibility(GONE);
+                }
+            }
+
+            // show search group and animate search icon
             groupSearch.setVisibility(View.VISIBLE);
             if (ivMenu != null) {
                 ivMenu.setVisibility(INVISIBLE);
@@ -726,7 +757,21 @@ public class JActionbar extends RelativeLayout {
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     groupSearch.setVisibility(View.GONE);
-                    ivMenu.setVisibility(VISIBLE);
+
+                    // show all views except search group
+                    if (ivMenu != null) {
+                        ivMenu.setVisibility(VISIBLE);
+                    }
+                    if (ivBack != null) {
+                        ivBack.setVisibility(VISIBLE);
+                    }
+                    tvTitle.setVisibility(VISIBLE);
+                    for (int i = 0; i < groupMenu.getChildCount(); i ++) {
+                        int id = groupMenu.getChildAt(i).getId();
+                        if (id != ID_ICON_SEARCH && id != ID_ICON_MORE) {
+                            groupMenu.getChildAt(i).setVisibility(VISIBLE);
+                        }
+                    }
                 }
 
                 @Override
