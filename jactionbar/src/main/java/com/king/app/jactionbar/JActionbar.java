@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.ListPopupWindow;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -277,8 +278,8 @@ public class JActionbar extends RelativeLayout {
         groupMenu.setId(ID_GROUP_ICON);
         groupMenu.setOrientation(LinearLayout.HORIZONTAL);
         groupMenu.setGravity(Gravity.CENTER_VERTICAL|Gravity.RIGHT);
-        LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        params.addRule(RelativeLayout.RIGHT_OF, ID_GROUP_TITLE);
+        LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         addView(groupMenu, params);
 
         int menuRes = a.getResourceId(R.styleable.JActionbar_menu, -1);
@@ -306,13 +307,16 @@ public class JActionbar extends RelativeLayout {
         ivBack.setOnClickListener(iconClickListener);
         layout.addView(ivBack);
 
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         tvTitle = new TextView(getContext());
         tvTitle.setLayoutParams(params);
         tvTitle.setTextColor(Color.WHITE);
+        tvTitle.setMaxLines(2);
+        tvTitle.setEllipsize(TextUtils.TruncateAt.END);
         layout.addView(tvTitle);
 
-        LayoutParams rParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+        LayoutParams rParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        rParams.addRule(LEFT_OF, ID_GROUP_ICON);
         addView(layout, rParams);
     }
 
@@ -794,6 +798,21 @@ public class JActionbar extends RelativeLayout {
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     groupSearch.setVisibility(View.GONE);
+
+                    // show all views except search group
+                    if (ivMenu != null) {
+                        ivMenu.setVisibility(VISIBLE);
+                    }
+                    if (ivBack != null) {
+                        ivBack.setVisibility(VISIBLE);
+                    }
+                    tvTitle.setVisibility(VISIBLE);
+                    for (int i = 0; i < groupMenu.getChildCount(); i ++) {
+                        int id = groupMenu.getChildAt(i).getId();
+                        if (id != ID_ICON_SEARCH && id != ID_ICON_MORE) {
+                            groupMenu.getChildAt(i).setVisibility(VISIBLE);
+                        }
+                    }
                 }
 
                 @Override

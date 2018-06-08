@@ -125,6 +125,7 @@ public class SampleActivity extends AppCompatActivity {
                 return onCancelAction(actionId);
             }
         });
+        actionBar.setTitle("Avengers\nInfinity war");
     }
 
     private void initList() {

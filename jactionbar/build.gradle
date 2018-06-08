@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 3
-        versionName "1.0.3"
+        versionCode 4
+        versionName "1.0.4"
     }
 
     buildTypes {
@@ -33,7 +33,7 @@ publish {
     userOrg = 'jingyangsddx'
     groupId = 'com.king.lib'
     artifactId = 'jactionbar'
-    publishVersion = '1.0.3'
+    publishVersion = '1.0.4'
     desc = 'A custom actionbar which can parse menu resource and implement search, confirm action'
     website = 'https://github.com/AidenKing/JActionbar.git'
 }
