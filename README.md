@@ -4,7 +4,7 @@
 
 ```
 dependencies {
-    compile 'com.king.lib:jactionbar:1.0.3'
+    compile 'com.king.lib:jactionbar:1.0.4'
 }
 ```
 
