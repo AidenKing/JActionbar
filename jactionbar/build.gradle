@@ -33,7 +33,7 @@ publish {
     userOrg = 'jingyangsddx'
     groupId = 'com.king.lib'
     artifactId = 'jactionbar'
-    publishVersion = '1.0.4'
+    publishVersion = '1.0.5'
     desc = 'A custom actionbar which can parse menu resource and implement search, confirm action'
     website = 'https://github.com/AidenKing/JActionbar.git'
 }
