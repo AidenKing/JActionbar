@@ -218,6 +218,11 @@ public class JActionbar extends RelativeLayout {
      */
     private int titleColor;
 
+    /**
+     * action text color
+     */
+    private int actionTextColor = Color.WHITE;
+
     public JActionbar(Context context) {
         super(context);
         init(null);
@@ -240,6 +245,7 @@ public class JActionbar extends RelativeLayout {
         isSupportSearch = typedArray.getBoolean(R.styleable.JActionbar_supportSearch, false);
         backgroundColor = typedArray.getColor(R.styleable.JActionbar_android_background, Color.parseColor("#fa7198"));
         maxShowIcon = typedArray.getInt(R.styleable.JActionbar_maxShowIcon, 4);
+        actionTextColor = typedArray.getColor(R.styleable.JActionbar_actionTextColor, Color.WHITE);
 
         initTitle(typedArray);
         initMenu(typedArray);
@@ -608,7 +614,7 @@ public class JActionbar extends RelativeLayout {
         view.setText(text);
         view.setId(id);
         view.setPadding(ParamUtils.dp2px(15), 0, ParamUtils.dp2px(15), 0);
-        view.setTextColor(Color.WHITE);
+        view.setTextColor(actionTextColor);
         view.setGravity(Gravity.CENTER);
         view.setTextSize(TypedValue.COMPLEX_UNIT_PX, ParamUtils.dp2px(18));
         GradientDrawable gd = new GradientDrawable();

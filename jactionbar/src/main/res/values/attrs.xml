@@ -10,6 +10,7 @@
         <attr name="supportSearch" format="boolean" />
         <attr name="titleSize" format="dimension" />
         <attr name="titleColor" format="color" />
+        <attr name="actionTextColor" format="color" />
         <attr name="iconSize" format="dimension" />
         <attr name="iconColor" format="color" />
         <attr name="iconPadding" format="dimension" />

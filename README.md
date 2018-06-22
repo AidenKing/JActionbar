@@ -4,7 +4,7 @@
 
 ```
 dependencies {
-    compile 'com.king.lib:jactionbar:1.0.4'
+    compile 'com.king.lib:jactionbar:1.0.5'
 }
 ```
 
@@ -83,6 +83,7 @@ use JActionbar like this
 | title         | string     | actionbar title                                              |
 | titleColor    | color      | actionbar title color                                        |
 | titleSize     | dimenssion | title size                                                   |
+| actionTextColor| dimenssion | actionbar text color                                                   |
 
 listener for back icon
 
