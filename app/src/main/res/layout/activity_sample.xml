@@ -23,7 +23,7 @@
         app:maxShowIcon="4"
         app:iconColor="@color/white"
         app:titleColor="@color/white"
-        app:menu="@menu/menu_sample_less"
+        app:menu="@menu/menu_sample"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

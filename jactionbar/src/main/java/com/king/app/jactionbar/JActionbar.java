@@ -298,6 +298,21 @@ public class JActionbar extends RelativeLayout {
     }
 
     /**
+     * set menu resource
+     * @param menuResourceId
+     */
+    public void setMenu(int menuResourceId) {
+        inflateMenu(menuResourceId);
+    }
+
+    /**
+     * remove menu group(icons in the right side except search)
+     */
+    public void removeMenu() {
+        resetAllMenus();
+    }
+
+    /**
      * add child views of title group
      */
     private void addTitle() {

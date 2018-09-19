@@ -235,10 +235,12 @@ public class SampleActivity extends AppCompatActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_menu:
-                actionBar.updateMenuText(R.id.menu_close, "Quit");
+//                actionBar.updateMenuText(R.id.menu_close, "Quit");
+                actionBar.setMenu(R.menu.menu_sample_less);
                 break;
             case R.id.btn_visible:
-                actionBar.updateMenuItemVisible(R.id.menu_edit, false);
+//                actionBar.updateMenuItemVisible(R.id.menu_edit, false);
+                actionBar.removeMenu();
                 break;
         }
     }
