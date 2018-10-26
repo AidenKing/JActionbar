@@ -122,7 +122,7 @@ public class MenuParser {
         int id = a.getResourceId(R.styleable.JMenuItem_android_id, -1);
         int iconRes = a.getResourceId(R.styleable.JMenuItem_android_icon, -1);
         String title = a.getText(R.styleable.JMenuItem_android_title).toString();
-        int showAsAction = a.getInt(R.styleable.JMenuItem_showAsAction, -1);
+        int showAsAction = a.getInt(R.styleable.JMenuItem_android_showAsAction, -1);
 
         JMenuItem item = new JMenuItem();
         item.setId(id);
