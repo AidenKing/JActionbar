@@ -28,12 +28,12 @@
         <attr name="android:visible"/>
         <attr name="android:enabled"/>
         <attr name="android:onClick"/>
-        <attr name="android:showAsAction"/>
-            <!--<flag name="never" value="0"/>-->
-            <!--<flag name="ifRoom" value="1"/>-->
-            <!--<flag name="always" value="2"/>-->
-            <!--<flag name="withText" value="4"/>-->
-            <!--<flag name="collapseActionView" value="8"/>-->
-        <!--</attr>-->
+        <attr name="showAsAction">
+            <flag name="never" value="0"/>
+            <flag name="ifRoom" value="1"/>
+            <flag name="always" value="2"/>
+            <flag name="withText" value="4"/>
+            <flag name="collapseActionView" value="8"/>
+        </attr>
     </declare-styleable>
 </resources>
