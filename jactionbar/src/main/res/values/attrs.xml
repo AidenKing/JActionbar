@@ -28,12 +28,13 @@
         <attr name="android:visible"/>
         <attr name="android:enabled"/>
         <attr name="android:onClick"/>
-        <attr name="showAsAction">
-            <flag name="never" value="0"/>
-            <flag name="ifRoom" value="1"/>
-            <flag name="always" value="2"/>
-            <flag name="withText" value="4"/>
-            <flag name="collapseActionView" value="8"/>
-        </attr>
+        <!--gradle-wrapper 4.6 or build gradle:3.2.1 开始下面的定义与系统冲突，不能再包含在该属性集里，java代码里另写其他代码解析-->
+        <!--<attr name="showAsAction">-->
+        <!--<flag name="never" value="0"/>-->
+        <!--<flag name="ifRoom" value="1"/>-->
+        <!--<flag name="always" value="2"/>-->
+        <!--<flag name="withText" value="4"/>-->
+        <!--<flag name="collapseActionView" value="8"/>-->
+        <!--</attr>-->
     </declare-styleable>
 </resources>
