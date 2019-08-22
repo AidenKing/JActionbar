@@ -6,8 +6,8 @@ android {
         applicationId "com.king.lib.jactionbar"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 2
-        versionName "1.1"
+        versionCode 3
+        versionName "1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -16,6 +16,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    dataBinding {
+        enabled = true
+    }
+
 }
 
 dependencies {
@@ -29,7 +33,4 @@ dependencies {
     implementation project(':jactionbar')
 
     implementation 'com.android.support:recyclerview-v7:26.1.0'
-    /*butterknife*/
-    implementation 'com.jakewharton:butterknife:8.5.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 }

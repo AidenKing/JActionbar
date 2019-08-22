@@ -29,6 +29,7 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -69,6 +70,7 @@ public class JActionbar extends RelativeLayout {
     private final int ID_ICON_CLOSE_SEARCH = 6;
     private final int ID_CONFIRM_OK = 7;
     private final int ID_CONFIRM_CANCEL = 8;
+    private final int ID_GROUP_SELECT_ALL = 9;
 
     /**
      * icon size
@@ -129,6 +131,13 @@ public class JActionbar extends RelativeLayout {
      * the group of confirm cancel or ok
      */
     private LinearLayout groupConfirm;
+    private TextView tvConfirm;
+    private TextView tvCancel;
+
+    /**
+     * the group of select all or un-select all
+     */
+    private LinearLayout groupSelectAll;
 
     /**
      * menu popup
@@ -162,6 +171,11 @@ public class JActionbar extends RelativeLayout {
     private OnMenuItemListener onMenuItemListener;
 
     /**
+     * the action event of select all or un-select all
+     */
+    private OnSelectAllListener onSelectAllListener;
+
+    /**
      * the action event of back icon
      */
     private OnBackListener onBackListener;
@@ -169,9 +183,11 @@ public class JActionbar extends RelativeLayout {
     /**
      * the specific action id of confirm event
      */
-    private int mConfirmActionId;
+    private int mConfirmCancelActionId;
 
     private OnConfirmListener onConfirmListener;
+
+    private OnCancelListener onCancelListener;
 
     /**
      * provider popup menu for icon menu
@@ -222,6 +238,12 @@ public class JActionbar extends RelativeLayout {
      * action text color
      */
     private int actionTextColor = Color.WHITE;
+
+    /**
+     * select all
+     */
+    private CheckBox cbSelectAll;
+    private TextView tvSelectAll;
 
     public JActionbar(Context context) {
         super(context);
@@ -585,22 +607,40 @@ public class JActionbar extends RelativeLayout {
     }
 
     /**
-     * show cancel/ok actions
+     * show cancel/ok actions, will hide menu icons
      * @param actionId
      */
     public void showConfirmStatus(int actionId) {
-        mConfirmActionId = actionId;
+        showConfirmStatus(actionId, false, null);
+    }
+
+    /**
+     *
+     * @param actionId
+     * @param onlyConfirm show confirm and hide cancel
+     * @param actionText if null, it will apply default text
+     */
+    public void showConfirmStatus(int actionId, boolean onlyConfirm, String actionText) {
+        mConfirmCancelActionId = actionId;
         if (groupConfirm == null) {
             initGroupConfirm();
         }
         else {
             groupConfirm.setVisibility(VISIBLE);
         }
+        if (onlyConfirm) {
+            tvCancel.setVisibility(GONE);
+            tvConfirm.setText(actionText);
+        }
+        else {
+            tvCancel.setVisibility(VISIBLE);
+            tvConfirm.setText(getConfirmText());
+        }
         groupMenu.setVisibility(GONE);
     }
 
     public void cancelConfirmStatus() {
-        mConfirmActionId = 0;
+        mConfirmCancelActionId = 0;
         groupConfirm.setVisibility(GONE);
         groupMenu.setVisibility(VISIBLE);
     }
@@ -609,18 +649,104 @@ public class JActionbar extends RelativeLayout {
         this.onConfirmListener = onConfirmListener;
     }
 
+    public void setOnCancelListener(OnCancelListener onCancelListener) {
+        this.onCancelListener = onCancelListener;
+    }
+
     private void initGroupConfirm() {
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
         params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         groupConfirm = new LinearLayout(getContext());
         groupConfirm.setLayoutParams(params);
 
-        TextView view = addConfirmText(ID_CONFIRM_CANCEL, "Cancel");
-        groupConfirm.addView(view);
-        view = addConfirmText(ID_CONFIRM_OK, "Ok");
-        groupConfirm.addView(view);
+        tvCancel = addConfirmText(ID_CONFIRM_CANCEL, getCancelText());
+        groupConfirm.addView(tvCancel);
+        tvConfirm = addConfirmText(ID_CONFIRM_OK, getConfirmText());
+        groupConfirm.addView(tvConfirm);
 
         addView(groupConfirm);
+    }
+
+    private String getConfirmText() {
+        return "Ok";
+    }
+
+    private String getCancelText() {
+        return "Cancel";
+    }
+
+    public void setOnSelectAllListener(OnSelectAllListener onSelectAllListener) {
+        this.onSelectAllListener = onSelectAllListener;
+    }
+
+    public void checkSelectAll(boolean check) {
+        if (groupSelectAll != null) {
+            if (check) {
+                cbSelectAll.setChecked(true);
+                tvSelectAll.setText("Deselect All");
+            }
+            else {
+                cbSelectAll.setChecked(false);
+                tvSelectAll.setText("Select All");
+            }
+        }
+    }
+
+    /**
+     * show select all, will hide back icon and title
+     */
+    public void showSelectAll(boolean show) {
+        if (show) {
+            if (groupSelectAll == null) {
+                initGroupSelectAll();
+            }
+            else {
+                groupSelectAll.setVisibility(VISIBLE);
+            }
+            ivBack.setVisibility(GONE);
+            tvTitle.setVisibility(GONE);
+        }
+        else {
+            if (groupSelectAll != null) {
+                groupSelectAll.setVisibility(GONE);
+            }
+            ivBack.setVisibility(VISIBLE);
+            tvTitle.setVisibility(VISIBLE);
+        }
+    }
+
+    private void initGroupSelectAll() {
+        LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        groupSelectAll = new LinearLayout(getContext());
+        groupSelectAll.setId(ID_GROUP_SELECT_ALL);
+        groupSelectAll.setLayoutParams(params);
+        groupSelectAll.setGravity(Gravity.CENTER_VERTICAL);
+        GradientDrawable gd = new GradientDrawable();
+        gd.setColor(Color.TRANSPARENT);
+        // param1:ripple color, param2:background of normal status, param3:the limit of ripple
+        RippleDrawable drawable = new RippleDrawable(ColorStateList.valueOf(rippleColor)
+                , gd, new ShapeDrawable(new RectShape()));
+        groupSelectAll.setBackground(drawable);
+        groupSelectAll.setOnClickListener(iconClickListener);
+        groupSelectAll.setPadding(ParamUtils.dp2px(16), 0, ParamUtils.dp2px(16), 0);
+
+        cbSelectAll = new CheckBox(getContext());
+        cbSelectAll.setClickable(false);
+        cbSelectAll.setFocusable(false);
+        cbSelectAll.setFocusableInTouchMode(false);
+        groupSelectAll.addView(cbSelectAll);
+
+        LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lParams.leftMargin = ParamUtils.dp2px(8);
+        tvSelectAll = new TextView(getContext());
+        tvSelectAll.setTextSize(TypedValue.COMPLEX_UNIT_PX, ParamUtils.dp2px(18));
+        tvSelectAll.setTextColor(actionTextColor);
+        tvSelectAll.setLayoutParams(lParams);
+        tvSelectAll.setTextAppearance(getContext(), R.style.TvTitle);
+        tvSelectAll.setText("Select All");
+        groupSelectAll.addView(tvSelectAll);
+
+        addView(groupSelectAll);
     }
 
     private TextView addConfirmText(int id, String text) {
@@ -663,19 +789,32 @@ public class JActionbar extends RelativeLayout {
                     mPopup.show();
                     break;
                 case ID_CONFIRM_OK:
-                    if (onConfirmListener == null) {
-                        cancelConfirmStatus();
-                    }
-                    else {
-                        if (onConfirmListener.onConfirm(mConfirmActionId)) {
-                            if (!onConfirmListener.disableInstantDismissConfirm()) {
-                                cancelConfirmStatus();
-                            }
-                        }
-                    }
+                    onConfirm();
                     break;
                 case ID_CONFIRM_CANCEL:
                     onCancel();
+                    break;
+                case ID_GROUP_SELECT_ALL:
+                    if (cbSelectAll.isChecked()) {
+                        if (onSelectAllListener != null) {
+                            if (onSelectAllListener.onSelectAll(false)) {
+                                cbSelectAll.setChecked(false);
+                            }
+                        }
+                        else {
+                            cbSelectAll.setChecked(false);
+                        }
+                    }
+                    else {
+                        if (onSelectAllListener != null) {
+                            if (onSelectAllListener.onSelectAll(true)) {
+                                cbSelectAll.setChecked(true);
+                            }
+                        }
+                        else {
+                            cbSelectAll.setChecked(true);
+                        }
+                    }
                     break;
                 default:
                     // check if registered popup menu for icon and don't dispatch to menu item listener if registered
@@ -693,15 +832,24 @@ public class JActionbar extends RelativeLayout {
         }
     };
 
-    private void onCancel() {
+    private void onConfirm() {
         if (onConfirmListener == null) {
             cancelConfirmStatus();
         }
         else {
-            if (onConfirmListener.onCancel(mConfirmActionId)) {
-                if (!onConfirmListener.disableInstantDismissCancel()) {
-                    cancelConfirmStatus();
-                }
+            if (onConfirmListener.onConfirm(mConfirmCancelActionId)) {
+                cancelConfirmStatus();
+            }
+        }
+    }
+
+    private void onCancel() {
+        if (onCancelListener == null) {
+            cancelConfirmStatus();
+        }
+        else {
+            if (onCancelListener.onCancel(mConfirmCancelActionId)) {
+                cancelConfirmStatus();
             }
         }
     }
@@ -937,7 +1085,7 @@ public class JActionbar extends RelativeLayout {
      * @return
      */
     public boolean onBackPressed() {
-        if (mConfirmActionId != 0) {
+        if (mConfirmCancelActionId != 0) {
             onCancel();
             return true;
         }

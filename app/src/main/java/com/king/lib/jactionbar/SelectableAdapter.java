@@ -1,7 +1,7 @@
 package com.king.lib.jactionbar;
 
+import android.databinding.ViewDataBinding;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.View;
@@ -18,7 +18,7 @@ import java.util.List;
  * @time 2018/3/25 0025 21:06
  */
 
-public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder, T> extends BaseRecyclerAdapter<VH, T> implements View.OnClickListener {
+public abstract class SelectableAdapter<V extends ViewDataBinding, T> extends BaseRecyclerAdapter<V, T> implements View.OnClickListener {
 
     protected boolean isSelect;
 
@@ -84,20 +84,20 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder, T> e
     }
 
     @Override
-    public void onBindViewHolder(VH holder, int position) {
+    protected void onBindItem(V holder, int position, T bean) {
         getCheckBox(holder).setVisibility(isSelect ? View.VISIBLE:View.GONE);
         getCheckBox(holder).setChecked(checkMap.get(position));
 
         getGroupItem(holder).setTag(position);
         getGroupItem(holder).setOnClickListener(this);
-        onBindSubHolder(holder, position);
+        onBindSubHolder(holder, position, bean);
     }
 
-    protected abstract ViewGroup getGroupItem(VH holder);
+    protected abstract ViewGroup getGroupItem(V holder);
 
-    protected abstract CheckBox getCheckBox(VH holder);
+    protected abstract CheckBox getCheckBox(V holder);
 
-    protected abstract void onBindSubHolder(VH holder, int position);
+    protected abstract void onBindSubHolder(V holder, int position, T bean);
 
     public void filter(String text) {
         if (!text.equals(mKeyword)) {
@@ -119,4 +119,10 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder, T> e
 
     protected abstract boolean isMatchForKeyword(T t, String text);
 
+    public void selectAll(boolean select) {
+        for (int i = 0; i < getItemCount(); i ++) {
+            checkMap.put(i, select);
+        }
+        notifyDataSetChanged();
+    }
 }

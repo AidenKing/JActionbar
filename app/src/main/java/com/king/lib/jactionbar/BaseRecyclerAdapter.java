@@ -1,5 +1,8 @@
 package com.king.lib.jactionbar;
 
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +15,7 @@ import java.util.List;
  * <p/>作者：景阳
  * <p/>创建时间: 2018/3/14 15:12
  */
-public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder, T> extends RecyclerView.Adapter<VH> {
+public abstract class BaseRecyclerAdapter<V extends ViewDataBinding, T> extends RecyclerView.Adapter {
 
     protected List<T> list;
 
@@ -31,14 +34,27 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder, T>
     }
 
     @Override
-    public VH onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(getItemLayoutRes(), parent, false);
-        return newViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        V binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext())
+                , getItemLayoutRes(), parent, false);
+        BindingHolder holder = new BindingHolder(binding.getRoot());
+        return holder;
     }
 
     protected abstract int getItemLayoutRes();
 
-    protected abstract VH newViewHolder(View view);
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        V binding = getBindingFromHolder(holder);
+        onBindItem(binding, position, list.get(position));
+        binding.executePendingBindings();
+    }
+
+    protected V getBindingFromHolder(RecyclerView.ViewHolder holder) {
+        return DataBindingUtil.getBinding(holder.itemView);
+    }
+
+    protected abstract void onBindItem(V binding, int position, T bean);
 
     @Override
     public int getItemCount() {
@@ -47,5 +63,12 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder, T>
 
     public interface OnItemClickListener<T> {
         void onClickItem(int position, T data);
+    }
+
+    public static class BindingHolder extends RecyclerView.ViewHolder {
+
+        public BindingHolder(View itemView) {
+            super(itemView);
+        }
     }
 }

@@ -1,21 +1,16 @@
 package com.king.lib.jactionbar;
 
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import com.king.lib.jactionbar.databinding.AdapterSampleBinding;
 
 /**
  * 描述:
  * <p/>作者：景阳
  * <p/>创建时间: 2018/3/29 16:27
  */
-public class SampleAdapter extends SelectableAdapter<SampleAdapter.SampleHolder, String> {
+public class SampleAdapter extends SelectableAdapter<AdapterSampleBinding, String> {
 
     @Override
     protected int getItemLayoutRes() {
@@ -23,42 +18,22 @@ public class SampleAdapter extends SelectableAdapter<SampleAdapter.SampleHolder,
     }
 
     @Override
-    protected SampleHolder newViewHolder(View view) {
-        return new SampleHolder(view);
-    }
-
-    @Override
-    protected ViewGroup getGroupItem(SampleHolder holder) {
+    protected ViewGroup getGroupItem(AdapterSampleBinding holder) {
         return holder.groupItem;
     }
 
     @Override
-    protected CheckBox getCheckBox(SampleHolder holder) {
+    protected CheckBox getCheckBox(AdapterSampleBinding holder) {
         return holder.cbCheck;
     }
 
     @Override
-    protected void onBindSubHolder(SampleHolder holder, int position) {
-        holder.tvName.setText(list.get(position));
+    protected void onBindSubHolder(AdapterSampleBinding holder, int position, String bean) {
+        holder.tvName.setText(bean);
     }
 
     @Override
     protected boolean isMatchForKeyword(String s, String text) {
         return s.toLowerCase().contains(text.toLowerCase());
-    }
-
-    public static class SampleHolder extends RecyclerView.ViewHolder {
-
-        @BindView(R.id.tv_name)
-        TextView tvName;
-        @BindView(R.id.cb_check)
-        CheckBox cbCheck;
-        @BindView(R.id.group_item)
-        LinearLayout groupItem;
-
-        public SampleHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-        }
     }
 }
