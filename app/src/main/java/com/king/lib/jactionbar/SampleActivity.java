@@ -54,14 +54,16 @@ public class SampleActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 //                binding.actionBar.updateMenuText(R.id.menu_close, "Quit");
-                binding.actionBar.setMenu(R.menu.menu_sample_less);
+//                binding.actionBar.setMenu(R.menu.menu_sample_less);
+                binding.actionBar.updateMenuItemVisible(R.id.menu_add, true);
             }
         });
         binding.btnVisible.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                binding.actionBar.updateMenuItemVisible(R.id.menu_edit, false);
-                binding.actionBar.removeMenu();
+//                binding.actionBar.removeMenu();
+                binding.actionBar.updateMenuItemVisible(R.id.menu_add, false);
             }
         });
     }

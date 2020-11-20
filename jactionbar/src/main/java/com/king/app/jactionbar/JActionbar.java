@@ -215,6 +215,11 @@ public class JActionbar extends RelativeLayout {
     private List<JMenuItem> moreItemList;
 
     /**
+     * all menu items presented as icon
+     */
+    private List<JMenuItem> iconList;
+
+    /**
      * menu items displayed eventually
      */
     private List<JMenuItem> displayMoreItemList;
@@ -400,7 +405,7 @@ public class JActionbar extends RelativeLayout {
             menu = new JMenu();
         }
 
-        List<JMenuItem> iconList = new ArrayList<>();
+        iconList = new ArrayList<>();
         moreItemList = new ArrayList<>();
         if (menu.getItemList() != null) {
             List<JMenuItem> list = menu.getItemList();
@@ -1066,17 +1071,26 @@ public class JActionbar extends RelativeLayout {
      * @param visible
      */
     public void updateMenuItemVisible(int id, boolean visible) {
+        boolean isMenuFound = false;
         if (moreItemList != null) {
             displayMoreItemList.clear();
             for (JMenuItem item:moreItemList) {
                 if (item.getId() == id) {
                     item.setVisible(visible);
+                    isMenuFound = true;
                 }
                 if (item.isVisible()) {
                     displayMoreItemList.add(item);
                 }
             }
             moreMenuAdapter.notifyDataSetChanged();
+        }
+        if (!isMenuFound) {
+            for (int i = 0; i < groupMenu.getChildCount(); i ++) {
+                if (groupMenu.getChildAt(i).getId() == id) {
+                    groupMenu.getChildAt(i).setVisibility(visible ? VISIBLE:GONE);
+                }
+            }
         }
     }
 
