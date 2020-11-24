@@ -189,6 +189,8 @@ public class JActionbar extends RelativeLayout {
 
     private OnCancelListener onCancelListener;
 
+    private OnPrepareMoreListener onPrepareMoreListener;
+
     /**
      * provider popup menu for icon menu
      */
@@ -658,6 +660,10 @@ public class JActionbar extends RelativeLayout {
         this.onCancelListener = onCancelListener;
     }
 
+    public void setOnPrepareMoreListener(OnPrepareMoreListener onPrepareMoreListener) {
+        this.onPrepareMoreListener = onPrepareMoreListener;
+    }
+
     private void initGroupConfirm() {
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
         params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -791,6 +797,9 @@ public class JActionbar extends RelativeLayout {
                     hideSearchBar();
                     break;
                 case ID_ICON_MORE:
+                    if (onPrepareMoreListener != null) {
+                        onPrepareMoreListener.onPrepareMore();
+                    }
                     mPopup.show();
                     break;
                 case ID_CONFIRM_OK:
