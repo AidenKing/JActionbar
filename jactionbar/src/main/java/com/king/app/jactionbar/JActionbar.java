@@ -108,6 +108,11 @@ public class JActionbar extends RelativeLayout {
     private int maxShowIcon = 4;
 
     /**
+     * max icon numbers to show
+     */
+    private int mPopupMenuWidth = ParamUtils.dp2px(140);
+
+    /**
      * back
      */
     private ImageView ivBack;
@@ -275,6 +280,7 @@ public class JActionbar extends RelativeLayout {
         backgroundColor = typedArray.getColor(R.styleable.JActionbar_android_background, Color.parseColor("#fa7198"));
         maxShowIcon = typedArray.getInt(R.styleable.JActionbar_maxShowIcon, 4);
         actionTextColor = typedArray.getColor(R.styleable.JActionbar_actionTextColor, Color.WHITE);
+        mPopupMenuWidth = typedArray.getDimensionPixelOffset(R.styleable.JActionbar_popupMenuWidth, ParamUtils.dp2px(140));
 
         initTitle(typedArray);
         initMenu(typedArray);
@@ -502,7 +508,7 @@ public class JActionbar extends RelativeLayout {
             mPopup = new ListPopupWindow(getContext());
             mPopup.setAnchorView(ivMenu);
             mPopup.setAdapter(moreMenuAdapter);
-            mPopup.setWidth(ParamUtils.dp2px(140));
+            mPopup.setWidth(mPopupMenuWidth);
             mPopup.setHeight(ListPopupWindow.WRAP_CONTENT);
             mPopup.setHorizontalOffset(-10);
             mPopup.setDropDownGravity(Gravity.END);

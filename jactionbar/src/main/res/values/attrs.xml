@@ -16,6 +16,7 @@
         <attr name="iconPadding" format="dimension" />
         <attr name="menu" format="reference" />
         <attr name="maxShowIcon" format="integer" />
+        <attr name="popupMenuWidth" format="dimension" />
     </declare-styleable>
 
     <!--JActionbar 从MenuItem复制部分-->
