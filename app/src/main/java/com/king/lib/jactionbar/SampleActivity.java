@@ -19,7 +19,6 @@ import com.king.app.jactionbar.OnConfirmListener;
 import com.king.app.jactionbar.OnMenuItemListener;
 import com.king.app.jactionbar.OnSearchListener;
 import com.king.app.jactionbar.OnSelectAllListener;
-import com.king.app.jactionbar.PopupMenuProvider;
 import com.king.lib.jactionbar.databinding.ActivitySampleBinding;
 
 import java.util.ArrayList;
@@ -34,8 +33,6 @@ public class SampleActivity extends AppCompatActivity {
 
     private List<String> itemList;
 
-    private PopupMenu popSort;
-    
     private ActivitySampleBinding binding;
 
     @Override
@@ -105,16 +102,24 @@ public class SampleActivity extends AppCompatActivity {
             }
         });
         // register popup menu for sort icon
-        binding.actionBar.registerPopupMenu(R.id.menu_sort);
-        binding.actionBar.setPopupMenuProvider(new PopupMenuProvider() {
-            @Override
-            public PopupMenu getPopupMenu(int iconMenuId, View anchorView) {
-                if (iconMenuId == R.id.menu_sort) {
-                    return getSortPopup(anchorView);
+        binding.actionBar.registerPopupMenuOn(
+                R.id.menu_sort,
+                R.menu.menu_sort,
+                new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.menu_sort_asc:
+                                Toast.makeText(SampleActivity.this, "menu_sort_asc", Toast.LENGTH_SHORT).show();
+                                break;
+                            case R.id.menu_sort_desc:
+                                Toast.makeText(SampleActivity.this, "menu_sort_desc", Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                        return false;
+                    }
                 }
-                return null;
-            }
-        });
+        );
         // confirm yes/no event
         binding.actionBar.setOnConfirmListener(new OnConfirmListener() {
             @Override
@@ -216,28 +221,6 @@ public class SampleActivity extends AppCompatActivity {
             adapter.setList(itemList);
             adapter.notifyDataSetChanged();
         }
-    }
-
-    private PopupMenu getSortPopup(View anchor) {
-        if (popSort == null) {
-            popSort = new PopupMenu(this, anchor);
-            popSort.getMenuInflater().inflate(R.menu.menu_sort, popSort.getMenu());
-            popSort.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.menu_sort_asc:
-                            Toast.makeText(SampleActivity.this, "menu_sort_asc", Toast.LENGTH_SHORT).show();
-                            break;
-                        case R.id.menu_sort_desc:
-                            Toast.makeText(SampleActivity.this, "menu_sort_desc", Toast.LENGTH_SHORT).show();
-                            break;
-                    }
-                    return false;
-                }
-            });
-        }
-        return popSort;
     }
 
     @Override

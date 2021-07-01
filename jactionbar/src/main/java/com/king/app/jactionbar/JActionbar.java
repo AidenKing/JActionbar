@@ -19,6 +19,7 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -33,8 +34,10 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.king.app.jactionbar.conf.Constants;
 import com.king.app.jactionbar.parser.MenuParser;
@@ -197,11 +200,6 @@ public class JActionbar extends RelativeLayout {
     private OnPrepareMoreListener onPrepareMoreListener;
 
     /**
-     * provider popup menu for icon menu
-     */
-    private PopupMenuProvider popupMenuProvider;
-
-    /**
      * To change the color of EditText's underline:
      * set android:theme="@style/EtActionSearch" like below to <JActionbarView> tag in xml
      *     <style name="EtActionSearch" parent="Theme.AppCompat.Light.NoActionBar">
@@ -239,7 +237,7 @@ public class JActionbar extends RelativeLayout {
     /**
      * registered popup menu for icons from outside
      */
-    private Map<Integer, Boolean> popupMenuMap;
+    private Map<Integer, PopupMenuWrap> popupMenuMap;
 
     /**
      * text color
@@ -838,11 +836,10 @@ public class JActionbar extends RelativeLayout {
                     break;
                 default:
                     // check if registered popup menu for icon and don't dispatch to menu item listener if registered
-                    if (popupMenuMap.get(v.getId()) != null && popupMenuMap.get(v.getId())) {
-                        if (popupMenuProvider != null) {
-                            popupMenuProvider.getPopupMenu(v.getId(), v).show();
-                            return;
-                        }
+                    PopupMenuWrap wrap = popupMenuMap.get(v.getId());
+                    if (wrap != null) {
+                        createSortPopup(wrap, v).show();
+                        return;
                     }
                     if (onMenuItemListener != null) {
                         onMenuItemListener.onMenuItemSelected(v.getId());
@@ -851,6 +848,14 @@ public class JActionbar extends RelativeLayout {
             }
         }
     };
+
+    private PopupMenu createSortPopup(PopupMenuWrap wrap, View anchor) {
+
+        PopupMenu popSort = new PopupMenu(anchor.getContext(), anchor);
+        popSort.getMenuInflater().inflate(wrap.menuId, popSort.getMenu());
+        popSort.setOnMenuItemClickListener(wrap.listener);
+        return popSort;
+    }
 
     private void onConfirm() {
         if (onConfirmListener == null) {
@@ -1043,24 +1048,25 @@ public class JActionbar extends RelativeLayout {
         isSupportSearch = false;
     }
 
-    public void setPopupMenuProvider(PopupMenuProvider popupMenuProvider) {
-        this.popupMenuProvider = popupMenuProvider;
+    private class PopupMenuWrap {
+
+        public int menuId;
+        public PopupMenu.OnMenuItemClickListener listener;
+
+        public PopupMenuWrap(int menuId, PopupMenu.OnMenuItemClickListener listener) {
+            this.menuId = menuId;
+            this.listener = listener;
+        }
     }
 
     /**
      * register PopupMenu for menu item(only worked for items presented by icon)
-     * @param menuItemId
+     * @param iconId
+     * @param menuId
+     * @param listener
      */
-    public void registerPopupMenu(int menuItemId) {
-        popupMenuMap.put(menuItemId, true);
-    }
-
-    /**
-     * cancel PopupMenu register for menu item
-     * @param menuItemId
-     */
-    public void removeRegisteredPopupMenu(int menuItemId) {
-        popupMenuMap.remove(menuItemId);
+    public void registerPopupMenuOn(int iconId, int menuId, PopupMenu.OnMenuItemClickListener listener) {
+        popupMenuMap.put(iconId, new PopupMenuWrap(menuId, listener));
     }
 
     /**
